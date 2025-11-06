@@ -25,16 +25,47 @@ public class HashTable {
     return sum;
   }
 
+  public int getCollisions() {
+    return collisions;
+  }
+
   // compute and return the compressed hash index
   private int compressHashCode(int sum) {
     return sum % table.capacity;
   }
   // return the index for a key.
-  public int findSlot(String key) {
+  // this is the code that wouldnt let me pass past 17
+  /*
+   * public int findSlot(String key) {
+   * int avail = -1;
+   * int h = computeHashCode(key);
+   * int j = compressHashCode(h);
+   * 
+   * do {
+   * if (isAvailable(j)) {
+   * if (avail == -1)
+   * avail = j;
+   * if (table.get(j) == null)
+   * break;
+   * } else if (table.get(j).getKey().equals(key))
+   * return j;
+   * else {
+   * j = (j + 1) % table.capacity;
+   * collisions++;
+   * }
+   * } while (j != compressHashCode(h));
+   * 
+   * return -(avail + 1);
+   * }
+   */
+
+  // return the index for a key.
+  public int findSlot(String key, boolean countCollisions) {
     int avail = -1;
     int h = computeHashCode(key);
     int j = compressHashCode(h);
-
+    int startJ = j;
+    int probes = 0;
     do {
       if (isAvailable(j)) {
         if (avail == -1)
@@ -44,17 +75,21 @@ public class HashTable {
       } else if (table.get(j).getKey().equals(key))
         return j;
       else {
-        j = (j + 1) % table.capacity;
-        collisions++;
+        if (countCollisions) {
+          collisions++;
+        }
       }
-    } while (j != compressHashCode(h));
-
+      j = (j + 1) % table.capacity;
+      probes++;
+      if (probes >= table.capacity)
+        break;
+    } while (j != startJ);
     return -(avail + 1);
   }
 
   // return the value associated with key K
   public String tableSearch(String K) {
-    int j = findSlot(K);
+    int j = findSlot(K, false);
     if (j < 0)
       return null;
     else
@@ -63,7 +98,7 @@ public class HashTable {
 
   // inserts the value associated with key K
   public String tableInsert(String key, String value) {
-    int j = findSlot(key);
+    int j = findSlot(key, true);
     if (j >= 0) {
       table.get(j).setValue(value);
     } else {
@@ -75,7 +110,7 @@ public class HashTable {
 
   // remove the value associated with key K
   public String tableRemove(String K) {
-    int j = findSlot(K);
+    int j = findSlot(K, false);
     if (j < 0)
       return null;
     else {

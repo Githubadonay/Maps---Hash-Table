@@ -29,6 +29,9 @@ public class TestHashTable {
             	  String value = "";
             	  String key = elements[1];  //key
                  //process insert, remove or search
+                 if (ops == 'I' && elements.length >= 6) {
+                  value = "Name: " + elements[2] + " " + elements[3] + " | Dep: " + elements[4] + " | GPA: " + elements[5];
+              }              
             	  switch(ops)
             	  {
             	  case 'I': 
@@ -66,6 +69,7 @@ public class TestHashTable {
          }
          
          //print collisions and hashtable output
+         System.out.println("\n" + hashingType + " Hash code collisions (Insertions) : " + HT.getCollisions());
          System.out.println(HT.tablePrint());
     } 
 }
